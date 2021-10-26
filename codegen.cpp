@@ -177,6 +177,9 @@ void Codegen::LowerExpr(const Scope &scope, const Expr &expr)
     case Expr::Kind::CALL: {
       return LowerCallExpr(scope, static_cast<const CallExpr &>(expr));
     }
+    case Expr::Kind::INT: {
+      return LowerIntExpr(scope, static_cast<const IntExpr &>(expr));
+    }
   }
 }
 
@@ -210,6 +213,18 @@ void Codegen::LowerBinaryExpr(const Scope &scope, const BinaryExpr &binary)
       return EmitAdd();
     }
   }
+}
+
+// -----------------------------------------------------------------------------
+// crestem stiva =>emitpop
+// emitem opcode-ul
+// emitem operand-ul
+
+void Codegen::LowerIntExpr(const Scope &scope, const IntExpr &intgr)
+{
+  depth_ += 1;
+  Emit<Opcode>(Opcode::PUSH_INT);
+  Emit<int64_t>(intgr.GetVal());
 }
 
 // -----------------------------------------------------------------------------

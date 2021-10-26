@@ -17,6 +17,10 @@ Token::Token(const Token &that)
       value_.StringValue = new std::string(*that.value_.StringValue);
       break;
     }
+    case Kind::INT: {
+    	value_.IntValue = that.value_.IntValue;
+      break;
+    }
     default: {
       break;
     }
@@ -42,6 +46,10 @@ Token &Token::operator=(const Token &that)
     case Kind::STRING:
     case Kind::IDENT: {
       value_.StringValue = new std::string(*that.value_.StringValue);
+      break;
+    }
+    case Kind::INT: {
+      value_.IntValue = that.value_.IntValue;
       break;
     }
     default: {
@@ -79,6 +87,14 @@ Token Token::String(const Location &l, const std::string &str)
 {
   Token tk(l, Kind::STRING);
   tk.value_.StringValue = new std::string(str);
+  return tk;
+}
+
+// -----------------------------------------------------------------------------
+Token Token::Int(const Location &l, const std::uint64_t &n)
+{
+  Token tk(l, Kind::INT);
+  tk.value_.IntValue = n;
   return tk;
 }
 
@@ -207,7 +223,16 @@ const Token &Lexer::Next()
         if (word == "return") return tk_ = Token::Return(loc);
         if (word == "while") return tk_ = Token::While(loc);
         return tk_ = Token::Ident(loc, word);
-      }
+      } 
+      else if (isdigit(chr_)){
+              uint64_t num=0;
+              do{
+              	num*=10;
+		num+=chr_-'0';
+		NextChar();
+              } while (isdigit(chr_));
+              return tk_ = Token::Int(loc,num);
+      } 
       Error("unknown character '" + std::string(1, chr_) + "'");
     }
   }

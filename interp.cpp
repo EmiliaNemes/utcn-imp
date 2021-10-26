@@ -51,6 +51,14 @@ void Interp::Run()
       case Opcode::ADD: {
         auto rhs = PopInt();
         auto lhs = PopInt();
+        
+        bool lhs1 = lhs >> 63;
+        bool rhs1 = rhs >> 63;
+        bool result = ((uint64_t)lhs + (uint64_t)rhs) >> 63;
+
+        if(result != lhs1 && rhs1 == lhs1){
+          throw RuntimeError("Invalid result!"); 
+        }
         Push(lhs + rhs);
         continue;
       }
@@ -79,6 +87,10 @@ void Interp::Run()
       case Opcode::STOP: {
         return;
       }
+      case Opcode::PUSH_INT: {
+          Push(prog_.Read<int64_t>(pc_));
+          continue;
+      } 
     }
   }
 }

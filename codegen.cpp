@@ -114,6 +114,9 @@ void Codegen::LowerStmt(const Scope &scope, const Stmt &stmt)
     case Stmt::Kind::WHILE: {
       return LowerWhileStmt(scope, static_cast<const WhileStmt &>(stmt));
     }
+    case Stmt::Kind::IF: {
+      return LowerIfStmt(scope, static_cast<const IfStmt &>(stmt));
+    }
     case Stmt::Kind::EXPR: {
       return LowerExprStmt(scope, static_cast<const ExprStmt &>(stmt));
     }
@@ -211,6 +214,9 @@ void Codegen::LowerBinaryExpr(const Scope &scope, const BinaryExpr &binary)
   switch (binary.GetKind()) {
     case BinaryExpr::Kind::ADD: {
       return EmitAdd();
+    }
+    case BinaryExpr::Kind::MODULO: {
+      return EmitModulo();
     }
   }
 }
@@ -353,6 +359,14 @@ void Codegen::EmitAdd()
   assert(depth_ > 0 && "no elements on stack");
   depth_ -= 1;
   Emit<Opcode>(Opcode::ADD);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitModulo()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::MODULO);
 }
 
 // -----------------------------------------------------------------------------

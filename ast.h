@@ -21,6 +21,7 @@ public:
   enum class Kind {
     BLOCK,
     WHILE,
+    IF,
     EXPR,
     RETURN
   };
@@ -83,7 +84,8 @@ class BinaryExpr : public Expr {
 public:
   /// Enumeration of binary operators.
   enum class Kind {
-    ADD
+    ADD,
+    MODULO
   };
 
 public:
@@ -215,6 +217,31 @@ class WhileStmt final : public Stmt {
 public:
   WhileStmt(std::shared_ptr<Expr> cond, std::shared_ptr<Stmt> stmt)
     : Stmt(Kind::WHILE)
+    , cond_(cond)
+    , stmt_(stmt)
+  {
+  }
+
+  const Expr &GetCond() const { return *cond_; }
+  const Stmt &GetStmt() const { return *stmt_; }
+
+private:
+  /// Condition for the loop.
+  std::shared_ptr<Expr> cond_;
+  /// Expression to be executed in the loop body.
+  std::shared_ptr<Stmt> stmt_;
+};
+
+
+/**
+ * If statement.
+ *
+ * If (<cond>) <stmt>
+ */
+class IfStmt final : public Stmt {
+public:
+  IfStmt(std::shared_ptr<Expr> cond, std::shared_ptr<Stmt> stmt)
+    : Stmt(Kind::IF)
     , cond_(cond)
     , stmt_(stmt)
   {

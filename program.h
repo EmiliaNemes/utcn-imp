@@ -22,6 +22,7 @@ enum class Opcode : uint8_t {
 
   ADD,
   RET,
+  MODULO,
 
   JUMP_FALSE,
   JUMP,

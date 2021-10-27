@@ -151,6 +151,8 @@ private:
   void EmitReturn();
   /// Emit an add opcode.
   void EmitAdd();
+  /// Emit a modulo opcode.
+  void EmitModulo();
   /// Emit a label.
   void EmitLabel(Label label);
   /// Emit a conditional jump.

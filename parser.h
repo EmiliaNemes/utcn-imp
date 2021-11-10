@@ -51,7 +51,7 @@ private:
   /// Parse an add/sub expression.
   std::shared_ptr<Expr> ParseAddSubExpr();
     /// Parse an add/sub expression.
-  std::shared_ptr<Expr> ParseModuloExpr();
+  std::shared_ptr<Expr> ParseMulDivModExpr();
 
   /// Helper to get the current token.
   inline const Token &Current() { return lexer_.GetToken(); }

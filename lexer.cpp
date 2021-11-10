@@ -129,6 +129,8 @@ std::ostream &operator<<(std::ostream &os, const Token::Kind kind)
     case Token::Kind::RETURN: return os << "return";
     case Token::Kind::WHILE: return os << "while";
     case Token::Kind::IF: return os << "if";
+    case Token::Kind::EQUALEQUAL: return os << "==";
+    case Token::Kind::NOTEQUAL: return os << "!=";
     case Token::Kind::LPAREN: return os << "(";
     case Token::Kind::RPAREN: return os << ")";
     case Token::Kind::LBRACE: return os << "{";
@@ -138,7 +140,10 @@ std::ostream &operator<<(std::ostream &os, const Token::Kind kind)
     case Token::Kind::EQUAL: return os << "=";
     case Token::Kind::COMMA: return os << ",";
     case Token::Kind::PLUS: return os << "+";
+    case Token::Kind::MINUS: return os << "-";
     case Token::Kind::MODULO: return os << "%";
+    case Token::Kind::MULTIPLY: return os << "*";
+    case Token::Kind::DIVIDE: return os << "/";
     case Token::Kind::END: return os << "END";
     case Token::Kind::INT: return os << "INT";
     case Token::Kind::STRING: return os << "STRING";
@@ -198,9 +203,11 @@ const Token &Lexer::Next()
     case '}': return NextChar(), tk_ = Token::RBrace(loc);
     case ':': return NextChar(), tk_ = Token::Colon(loc);
     case ';': return NextChar(), tk_ = Token::Semi(loc);
-    case '=': return NextChar(), tk_ = Token::Equal(loc);
     case '+': return NextChar(), tk_ = Token::Plus(loc);
+    case '-': return NextChar(), tk_ = Token::Minus(loc);
     case '%': return NextChar(), tk_ = Token::Modulo(loc);
+    case '*': return NextChar(), tk_ = Token::Multiply(loc);
+    case '/': return NextChar(), tk_ = Token::Divide(loc);
     case ',': return NextChar(), tk_ = Token::Comma(loc);
     case '"': {
       std::string word;
@@ -214,6 +221,22 @@ const Token &Lexer::Next()
       }
       NextChar();
       return tk_ = Token::String(loc, word);
+    }
+    case '=': {
+      NextChar();
+      if(chr_ == '='){
+        return NextChar(), tk_ = Token::EqualEqual(loc);
+      } else {
+        return tk_ = Token::Equal(loc);
+      }
+    }
+    case '!': {
+      NextChar();
+      if(chr_ == '='){
+        return NextChar(), tk_ = Token::NotEqual(loc);
+      } else {
+        Error("unknown expression: ! ");
+      }
     }
     default: {
       if (IsIdentStart(chr_)) {

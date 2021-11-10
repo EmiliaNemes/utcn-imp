@@ -181,24 +181,45 @@ std::shared_ptr<Expr> Parser::ParseCallExpr()
 // -----------------------------------------------------------------------------
 std::shared_ptr<Expr> Parser::ParseAddSubExpr()
 {
-  std::shared_ptr<Expr> term = ParseModuloExpr();
-  while (Current().Is(Token::Kind::PLUS)) {
-    lexer_.Next();
-    auto rhs = ParseModuloExpr();
-    term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::ADD, term, rhs);
+  std::shared_ptr<Expr> term = ParseMulDivModExpr();
+  while (Current().Is(Token::Kind::PLUS) || Current().Is(Token::Kind::MINUS)) {
+    if(Current().Is(Token::Kind::PLUS)){
+      lexer_.Next();
+      auto rhs = ParseMulDivModExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::ADD, term, rhs);
+    }
+    if(Current().Is(Token::Kind::MINUS)){
+      lexer_.Next();
+      auto rhs = ParseMulDivModExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::SUB, term, rhs);
+    }
+    
   }
   return term;
 }
 
 // -----------------------------------------------------------------------------
 
-std::shared_ptr<Expr> Parser::ParseModuloExpr()
+std::shared_ptr<Expr> Parser::ParseMulDivModExpr()
 {
   std::shared_ptr<Expr> term = ParseCallExpr();
-  while (Current().Is(Token::Kind::MODULO)) {
-    lexer_.Next();
-    auto rhs = ParseCallExpr();
-    term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::MODULO, term, rhs);
+  while (Current().Is(Token::Kind::MODULO) || Current().Is(Token::Kind::MULTIPLY) || Current().Is(Token::Kind::DIVIDE)) {
+    if(Current().Is(Token::Kind::MODULO)){
+      lexer_.Next();
+      auto rhs = ParseCallExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::MODULO, term, rhs);
+    }
+    if(Current().Is(Token::Kind::MULTIPLY)){
+      lexer_.Next();
+      auto rhs = ParseCallExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::MUL, term, rhs);
+    }
+    if(Current().Is(Token::Kind::DIVIDE)){
+      lexer_.Next();
+      auto rhs = ParseCallExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::DIV, term, rhs);
+    }
+    
   }
   return term;
 }

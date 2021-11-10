@@ -152,6 +152,16 @@ void Codegen::LowerWhileStmt(const Scope &scope, const WhileStmt &whileStmt)
   EmitJump(entry);
   EmitLabel(exit);
 }
+// -----------------------------------------------------------------------------
+void Codegen::LowerIfStmt(const Scope &scope, const IfStmt &ifStmt)
+{
+  auto exit = MakeLabel();
+
+  LowerExpr(scope, ifStmt.GetCond());
+  EmitJumpFalse(exit);
+  LowerStmt(scope, ifStmt.GetStmt());
+  EmitLabel(exit);
+}
 
 // -----------------------------------------------------------------------------
 void Codegen::LowerReturnStmt(const Scope &scope, const ReturnStmt &retStmt)
@@ -215,8 +225,17 @@ void Codegen::LowerBinaryExpr(const Scope &scope, const BinaryExpr &binary)
     case BinaryExpr::Kind::ADD: {
       return EmitAdd();
     }
+    case BinaryExpr::Kind::SUB: {
+      return EmitSub();
+    }
     case BinaryExpr::Kind::MODULO: {
       return EmitModulo();
+    }
+    case BinaryExpr::Kind::MUL: {
+      return EmitMul();
+    }
+    case BinaryExpr::Kind::DIV: {
+      return EmitDiv();
     }
   }
 }
@@ -362,11 +381,35 @@ void Codegen::EmitAdd()
 }
 
 // -----------------------------------------------------------------------------
+void Codegen::EmitSub()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::SUB);
+}
+
+// -----------------------------------------------------------------------------
 void Codegen::EmitModulo()
 {
   assert(depth_ > 0 && "no elements on stack");
   depth_ -= 1;
   Emit<Opcode>(Opcode::MODULO);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitMul()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::MUL);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitDiv()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::DIV);
 }
 
 // -----------------------------------------------------------------------------

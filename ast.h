@@ -85,7 +85,12 @@ public:
   /// Enumeration of binary operators.
   enum class Kind {
     ADD,
-    MODULO
+    SUB,
+    MODULO,
+    MUL,
+    DIV,
+    EQEQ,
+    NEQ
   };
 
 public:
@@ -240,10 +245,11 @@ private:
  */
 class IfStmt final : public Stmt {
 public:
-  IfStmt(std::shared_ptr<Expr> cond, std::shared_ptr<Stmt> stmt)
+  IfStmt(std::shared_ptr<Expr> cond, std::shared_ptr<Stmt> stmt, std::shared_ptr<Stmt> elseStmt)
     : Stmt(Kind::IF)
     , cond_(cond)
     , stmt_(stmt)
+    , elseStmt_(elseStmt)
   {
   }
 
@@ -255,6 +261,7 @@ private:
   std::shared_ptr<Expr> cond_;
   /// Expression to be executed in the loop body.
   std::shared_ptr<Stmt> stmt_;
+  std::shared_ptr<Stmt> elseStmt_;
 };
 
 /**

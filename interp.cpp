@@ -62,10 +62,48 @@ void Interp::Run()
         Push(lhs + rhs);
         continue;
       }
+      case Opcode::SUB: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        
+        bool lhs1 = lhs >> 63;
+        bool rhs1 = rhs >> 63;
+        bool result = ((uint64_t)lhs - (uint64_t)rhs) >> 63;
+
+        if(result != lhs1 && rhs1 == lhs1){
+          throw RuntimeError("Invalid result!"); 
+        }
+        Push(lhs - rhs);
+        continue;
+      }
       case Opcode::MODULO: {
         auto rhs = PopInt();
         auto lhs = PopInt();
         Push(lhs % rhs);
+        continue;
+      }
+      case Opcode::MUL: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        Push(lhs * rhs);
+        continue;
+      }
+      case Opcode::DIV: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        Push(lhs / rhs);
+        continue;
+      }
+      case Opcode::EQEQ: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        Push((int64_t) (rhs==lhs));
+        continue;
+      }
+      case Opcode::NEQ: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        Push((int64_t) (rhs!=lhs));
         continue;
       }
       case Opcode::RET: {

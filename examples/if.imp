@@ -1,0 +1,14 @@
+func print_int(a: int): int = "print_int"
+func read_int(): int = "read_int"
+
+func if_func(a: int): int {
+  if (a % 2 == 0) {
+      print_int(a/2)
+    } else {
+    	print_int(a*2 - 1)
+    };
+    
+   return print_int(a)
+}
+
+if_func(read_int())

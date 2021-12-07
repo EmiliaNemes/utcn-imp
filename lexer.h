@@ -38,6 +38,7 @@ public:
     RETURN,
     WHILE,
     IF,
+    ELSE,
     // Symbols.
     LPAREN,
     RPAREN,
@@ -124,6 +125,7 @@ public:
   static Token Return(const Location &l) { return Token(l, Kind::RETURN); }
   static Token While(const Location &l) { return Token(l, Kind::WHILE); }
   static Token If(const Location &l) { return Token(l, Kind::IF); }
+  static Token Else(const Location &l) { return Token(l, Kind::ELSE); }
   static Token Ident(const Location &l, const std::string &str);
   static Token String(const Location &l, const std::string &str);
   static Token Int(const Location &l, const std::uint64_t &n);

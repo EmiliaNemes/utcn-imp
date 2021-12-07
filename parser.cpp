@@ -88,6 +88,7 @@ std::shared_ptr<Stmt> Parser::ParseStmt()
   switch (tk.GetKind()) {
     case Token::Kind::RETURN: return ParseReturnStmt();
     case Token::Kind::WHILE: return ParseWhileStmt();
+    case Token::Kind::IF: return ParseIfStmt();
     case Token::Kind::LBRACE: return ParseBlockStmt();
     default: return std::make_shared<ExprStmt>(ParseExpr());
   }
@@ -130,6 +131,26 @@ std::shared_ptr<WhileStmt> Parser::ParseWhileStmt()
   lexer_.Next();
   auto stmt = ParseStmt();
   return std::make_shared<WhileStmt>(cond, stmt);
+}
+
+// -----------------------------------------------------------------------------
+std::shared_ptr<IfStmt> Parser::ParseIfStmt()
+{
+  Check(Token::Kind::IF);
+  Expect(Token::Kind::LPAREN);
+  lexer_.Next();
+  auto cond = ParseExpr();
+  Check(Token::Kind::RPAREN);
+  lexer_.Next();
+  auto stmt = ParseStmt();
+
+  if(Current().GetKind() == Token::Kind::ELSE){
+    lexer_.Next();
+    auto elseStmt = ParseStmt();
+    return std::make_shared<IfStmt>(cond, stmt, elseStmt);
+  }
+
+  return std::make_shared<IfStmt>(cond, stmt);
 }
 
 // -----------------------------------------------------------------------------
@@ -177,6 +198,27 @@ std::shared_ptr<Expr> Parser::ParseCallExpr()
   }
   return callee;
 }
+
+// -----------------------------------------------------------------------------
+
+std::shared_ptr<Expr> Parser::ParseCompExpr()
+{
+  std::shared_ptr<Expr> term = ParseAddSubExpr();
+  while (Current().Is(Token::Kind::EQUALEQUAL) || Current().Is(Token::Kind::NOTEQUAL)) {
+    if(Current().Is(Token::Kind::EQUALEQUAL)){
+      lexer_.Next();
+      auto rhs = ParseAddSubExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::EQEQ, term, rhs);
+    }
+    if(Current().Is(Token::Kind::NOTEQUAL)){
+      lexer_.Next();
+      auto rhs = ParseAddSubExpr();
+      term = std::make_shared<BinaryExpr>(BinaryExpr::Kind::NEQ, term, rhs);
+    }
+  }
+  return term;
+}
+
 
 // -----------------------------------------------------------------------------
 std::shared_ptr<Expr> Parser::ParseAddSubExpr()

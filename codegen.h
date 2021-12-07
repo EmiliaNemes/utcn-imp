@@ -162,6 +162,10 @@ private:
    /// Emit a divide opcode.
   void EmitDiv();
   /// Emit a label.
+  void EmitEqualEqual();
+  /// Emit a label.
+  void EmitNotEqual();
+  /// Emit a label.
   void EmitLabel(Label label);
   /// Emit a conditional jump.
   void EmitJumpFalse(Label label);

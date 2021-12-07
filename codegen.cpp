@@ -156,10 +156,16 @@ void Codegen::LowerWhileStmt(const Scope &scope, const WhileStmt &whileStmt)
 void Codegen::LowerIfStmt(const Scope &scope, const IfStmt &ifStmt)
 {
   auto exit = MakeLabel();
+  auto elsecond = MakeLabel();
 
   LowerExpr(scope, ifStmt.GetCond());
-  EmitJumpFalse(exit);
+  EmitJumpFalse(elsecond);
   LowerStmt(scope, ifStmt.GetStmt());
+  EmitJump(exit);
+  EmitLabel(elsecond);
+  if(ifStmt.GetElseStmt() != nullptr){
+    LowerStmt(scope, *ifStmt.GetElseStmt());
+  }
   EmitLabel(exit);
 }
 
@@ -236,6 +242,12 @@ void Codegen::LowerBinaryExpr(const Scope &scope, const BinaryExpr &binary)
     }
     case BinaryExpr::Kind::DIV: {
       return EmitDiv();
+    }
+    case BinaryExpr::Kind::EQEQ: {
+      return EmitEqualEqual();
+    }
+    case BinaryExpr::Kind::NEQ: {
+      return EmitNotEqual();
     }
   }
 }
@@ -410,6 +422,22 @@ void Codegen::EmitDiv()
   assert(depth_ > 0 && "no elements on stack");
   depth_ -= 1;
   Emit<Opcode>(Opcode::DIV);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitEqualEqual()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::EQEQ);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitNotEqual()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::NEQ);
 }
 
 // -----------------------------------------------------------------------------

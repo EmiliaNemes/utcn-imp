@@ -118,6 +118,8 @@ private:
   void LowerIfStmt(const Scope &scope, const IfStmt &ifStmt);
   /// Lowers a return statement.
   void LowerReturnStmt(const Scope &scope, const ReturnStmt &returnStmt);
+  /// Lowers a let statement.
+  void LowerLetStmt(const Scope &scope, const LetStmt &letStmt);
   /// Lowers a standalone expression statement.
   void LowerExprStmt(const Scope &scope, const ExprStmt &exprStmt);
 

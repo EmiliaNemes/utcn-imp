@@ -123,7 +123,16 @@ void Codegen::LowerStmt(const Scope &scope, const Stmt &stmt)
     case Stmt::Kind::RETURN: {
       return LowerReturnStmt(scope, static_cast<const ReturnStmt &>(stmt));
     }
+    case Stmt::Kind::LET: {
+      return LowerLetStmt(scope, static_cast<const LetStmt &>(stmt));
+    }
   }
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::LowerLetStmt(const Scope &scope, const LetStmt &letStmt)
+{
+  LowerExpr(scope, letStmt.GetExpr());
 }
 
 // -----------------------------------------------------------------------------

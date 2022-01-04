@@ -30,6 +30,19 @@ Parser::Parser(Lexer &lexer)
 }
 
 // -----------------------------------------------------------------------------
+std::shared_ptr<LetStmt> Parser::ParseLetStmt()
+{
+  Check(Token::Kind::LET);
+  std::string arg(Expect(Token::Kind::IDENT).GetIdent());
+  Expect(Token::Kind::COLON);
+  std::string type(Expect(Token::Kind::IDENT).GetIdent());
+  Expect(Token::Kind::EQUAL);
+  lexer_.Next();
+  auto expr = ParseExpr();
+  return std::make_shared<LetStmt>(expr);
+}
+
+// -----------------------------------------------------------------------------
 std::shared_ptr<Module> Parser::ParseModule()
 {
   std::vector<TopLevelStmt> body;
@@ -87,6 +100,7 @@ std::shared_ptr<Stmt> Parser::ParseStmt()
   auto tk = Current();
   switch (tk.GetKind()) {
     case Token::Kind::RETURN: return ParseReturnStmt();
+    case Token::Kind::LET: return ParseLetStmt();
     case Token::Kind::WHILE: return ParseWhileStmt();
     case Token::Kind::IF: return ParseIfStmt();
     case Token::Kind::LBRACE: return ParseBlockStmt();
@@ -119,6 +133,8 @@ std::shared_ptr<ReturnStmt> Parser::ParseReturnStmt()
   auto expr = ParseExpr();
   return std::make_shared<ReturnStmt>(expr);
 }
+
+
 
 // -----------------------------------------------------------------------------
 std::shared_ptr<WhileStmt> Parser::ParseWhileStmt()

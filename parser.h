@@ -37,6 +37,8 @@ private:
   std::shared_ptr<BlockStmt> ParseBlockStmt();
   /// Parse a return statement: return <expr>
   std::shared_ptr<ReturnStmt> ParseReturnStmt();
+  /// Parse a let statement: let <expr>
+  std::shared_ptr<LetStmt> ParseLetStmt();
   /// Parse a while loop.
   std::shared_ptr<WhileStmt> ParseWhileStmt();
   /// Parse an if statement.

@@ -1,0 +1,9 @@
+func print_int(a: int): int = "print_int"
+func read_int(): int = "read_int"
+
+func f(a: int): int {
+    let c: int = a+1;
+    print_int(a)
+}
+
+f(9)

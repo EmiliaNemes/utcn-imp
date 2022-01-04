@@ -23,7 +23,8 @@ public:
     WHILE,
     IF,
     EXPR,
-    RETURN
+    RETURN,
+    LET
   };
 
 public:
@@ -210,6 +211,24 @@ public:
 
 private:
   /// Expression to be returned.
+  std::shared_ptr<Expr> expr_;
+};
+
+/**
+ * Let statement.
+ */
+class LetStmt final : public Stmt {
+public:
+  LetStmt(std::shared_ptr<Expr> expr)
+    : Stmt(Kind::LET)
+    , expr_(expr)
+  {
+  }
+
+  const Expr &GetExpr() const { return *expr_; }
+
+private:
+  /// Stmt.
   std::shared_ptr<Expr> expr_;
 };
 
